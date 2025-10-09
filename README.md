@@ -1,37 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LINE Official Account Registration Form
 
-## Getting Started
+LINE公式アカウントのリッチメニューから開く登録フォームです。
 
-First, run the development server:
+## 機能
 
+- LINEリッチメニューからの自動LINE ID取得
+- ユーザー登録フォーム
+- 管理者画面での登録データ確認・CSV出力
+- LINE Bot APIとの連携
+
+## 技術スタック
+
+- Next.js 15
+- TypeScript
+- Prisma
+- PostgreSQL
+- Tailwind CSS
+- React Hook Form + Zod
+
+## セットアップ
+
+1. 依存関係のインストール
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 環境変数の設定
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. データベースのセットアップ
+```bash
+npx prisma db push
+npx prisma generate
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. 開発サーバーの起動
+```bash
+npm run dev
+```
 
-## Learn More
+## 環境変数
 
-To learn more about Next.js, take a look at the following resources:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/line_official_register?schema=public"
+NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID="your_line_login_channel_id"
+LINE_LOGIN_CHANNEL_SECRET="your_line_login_channel_secret"
+NEXT_PUBLIC_BASE_URL="https://your-domain.vercel.app"
+LINE_BOT_CHANNEL_ACCESS_TOKEN="your_bot_channel_access_token"
+LINE_BOT_CHANNEL_SECRET="your_bot_channel_secret"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## デプロイ
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Vercelでのデプロイに対応しています。
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# range_system
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/line-official-register)
