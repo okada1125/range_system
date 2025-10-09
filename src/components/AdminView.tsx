@@ -11,9 +11,9 @@ interface Registration {
   companyName: string;
   email: string;
   birthDate: Date;
-  lineUserId?: string;
-  lineDisplayName?: string;
-  linePictureUrl?: string;
+  lineUserId: string | null;
+  lineDisplayName: string | null;
+  linePictureUrl: string | null;
   createdAt: Date;
 }
 
