@@ -1,25 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model LineRegistration {
-  id           String   @id @default(cuid())
-  nameKanji    String
-  nameKatakana String
-  phoneNumber  String
-  companyName  String
-  email        String
-  birthDate    DateTime
-  lineUserId   String?  // LINEユーザーID
-  lineDisplayName String? // LINE表示名
-  linePictureUrl String? // LINEプロフィール画像URL
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String   @id @default(cuid())
+  nameKanji       String
+  nameKatakana    String
+  phoneNumber     String
+  companyName     String
+  email           String
+  birthDate       DateTime
+  lineUserId      String?  // LINEユーザーID
+  lineDisplayName String?  // LINE表示名
+  linePictureUrl  String?  // LINEプロフィール画像URL
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @updatedAt @db.Timestamp(6)
 
   @@map("line_registrations")
 }
+

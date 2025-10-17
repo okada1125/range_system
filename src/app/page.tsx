@@ -2,19 +2,30 @@ import RegisterForm from "@/components/RegisterForm";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">
-              LINE公式アカウント登録
-            </h1>
-            <p className="text-gray-600">以下のフォームにご記入ください</p>
-          </div>
-
-          <RegisterForm />
-        </div>
+    <div
+      style={{
+        backgroundColor: "#f4f4f4",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          padding: "30px 20px",
+          borderRadius: "10px",
+          marginBottom: "20px",
+          boxShadow: "0px 1px 12px 1px rgba(0,0,0,0.05)",
+          width: "100%",
+          maxWidth: "500px",
+        }}
+      >
+        <RegisterForm />
       </div>
-    </main>
+    </div>
   );
 }

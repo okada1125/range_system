@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { AppDataSource } from "@/lib/database";
+import { LineRegistration } from "@/entities/lineRegistration.entity";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +14,14 @@ export async function POST(request: NextRequest) {
     const webhookData = JSON.parse(body);
     const events = webhookData.events;
 
+    // データベース接続を初期化
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
+
+    const registrationRepository =
+      AppDataSource.getRepository(LineRegistration);
+
     for (const event of events) {
       if (
         event.type === "postback" &&
@@ -20,15 +29,19 @@ export async function POST(request: NextRequest) {
       ) {
         const userId = event.source.userId;
 
-        const existingRegistration = await prisma.lineRegistration.findFirst({
+        // 登録済みかチェック
+        const existingRegistration = await registrationRepository.findOne({
           where: { lineUserId: userId },
         });
 
         const channelAccessToken = process.env.LINE_BOT_CHANNEL_ACCESS_TOKEN;
         const baseUrl =
-          process.env.NEXT_PUBLIC_BASE_URL || "http://192.168.10.200:3000";
+          process.env.NEXT_PUBLIC_BASE_URL ||
+          "https://yahaira-semirationalized-andra.ngrok-free.dev";
 
         if (existingRegistration) {
+          // 登録済みの場合、フォームへのリンクを送信（上書き可能）
+          const formUrl = `${baseUrl}?lineUserId=${userId}`;
           await fetch("https://api.line.me/v2/bot/message/push", {
             method: "POST",
             headers: {
@@ -39,13 +52,31 @@ export async function POST(request: NextRequest) {
               to: userId,
               messages: [
                 {
-                  type: "text",
-                  text: "既に登録済みです。ありがとうございます！",
+                  type: "template",
+                  altText: "登録情報の更新",
+                  template: {
+                    type: "buttons",
+                    text: `${
+                      existingRegistration.nameKanji
+                    } 様\n\n既に登録済みです。\n登録日: ${new Date(
+                      existingRegistration.createdAt
+                    ).toLocaleDateString(
+                      "ja-JP"
+                    )}\n\n登録情報を更新することができます。`,
+                    actions: [
+                      {
+                        type: "uri",
+                        label: "登録情報を更新",
+                        uri: formUrl,
+                      },
+                    ],
+                  },
                 },
               ],
             }),
           });
         } else {
+          // 未登録の場合、フォームへのリンクを送信
           const formUrl = `${baseUrl}?lineUserId=${userId}`;
           await fetch("https://api.line.me/v2/bot/message/push", {
             method: "POST",

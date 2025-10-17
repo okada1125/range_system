@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LINE公式アカウント登録</title>
+    <script
+      charset="utf-8"
+      src="https://static.line-scdn.net/liff/edge/2/sdk.js"
+    ></script>
+  </head>
+  <body>
+    <script>
+      // LIFFアプリの初期化
+      liff
+        .init({
+          liffId: "2008256152-pOz4Rxrz", // 実際のLIFF IDを設定
+        })
+        .then(() => {
+          if (liff.isLoggedIn()) {
+            // ログイン済みの場合、フォームページにリダイレクト
+            window.location.href = "/";
+          } else {
+            // 未ログインの場合、ログイン画面を表示
+            liff.login();
+          }
+        })
+        .catch((err) => {
+          console.error("LIFF初期化エラー:", err);
+          // エラーの場合でもフォームページにリダイレクト
+          window.location.href = "/";
+        });
+    </script>
+  </body>
+</html>

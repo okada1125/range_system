@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { AppDataSource } from "@/lib/database";
+import { LineRegistration } from "@/entities/lineRegistration.entity";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
-    // バリデーション
     const {
       nameKanji,
       nameKatakana,
@@ -14,8 +13,6 @@ export async function POST(request: NextRequest) {
       email,
       birthDate,
       lineUserId,
-      lineDisplayName,
-      linePictureUrl,
     } = body;
 
     if (
@@ -32,25 +29,61 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // データベースに保存
-    const registration = await prisma.lineRegistration.create({
-      data: {
-        nameKanji,
-        nameKatakana,
-        phoneNumber,
-        companyName,
-        email,
-        birthDate: new Date(birthDate),
-        lineUserId: lineUserId || null,
-        lineDisplayName: lineDisplayName || null,
-        linePictureUrl: linePictureUrl || null,
-      },
-    });
+    // データベース接続を初期化
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
 
-    console.log("新規登録完了:", registration);
+    const registrationRepository =
+      AppDataSource.getRepository(LineRegistration);
+
+    // 同じLINE IDが既に存在するかチェック
+    let existingRegistration = null;
+    if (lineUserId) {
+      existingRegistration = await registrationRepository.findOne({
+        where: { lineUserId: lineUserId },
+      });
+    }
+
+    let savedRegistration;
+    let isUpdate = false;
+
+    if (existingRegistration) {
+      // 既存の登録を更新
+      existingRegistration.nameKanji = nameKanji;
+      existingRegistration.nameKatakana = nameKatakana;
+      existingRegistration.phoneNumber = phoneNumber;
+      existingRegistration.companyName = companyName;
+      existingRegistration.email = email;
+      existingRegistration.birthDate = new Date(birthDate);
+      // lineUserIdは既に設定されているので更新不要
+
+      savedRegistration = await registrationRepository.save(
+        existingRegistration
+      );
+      isUpdate = true;
+      console.log("登録情報を更新しました:", savedRegistration);
+    } else {
+      // 新規登録
+      const registration = new LineRegistration();
+      registration.nameKanji = nameKanji;
+      registration.nameKatakana = nameKatakana;
+      registration.phoneNumber = phoneNumber;
+      registration.companyName = companyName;
+      registration.email = email;
+      registration.birthDate = new Date(birthDate);
+      registration.lineUserId = lineUserId;
+
+      savedRegistration = await registrationRepository.save(registration);
+      console.log("新規登録完了:", savedRegistration);
+    }
 
     return NextResponse.json(
-      { message: "登録が完了しました" },
+      {
+        message: isUpdate ? "登録情報を更新しました" : "登録が完了しました",
+        id: savedRegistration.id,
+        isUpdate: isUpdate,
+      },
       { status: 200 }
     );
   } catch (error) {
