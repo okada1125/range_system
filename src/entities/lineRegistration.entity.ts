@@ -35,7 +35,6 @@ export class LineRegistration {
 
   @CreateDateColumn({
     type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP",
     transformer: {
       to: (value: Date) => value,
       from: (value: Date) =>
@@ -46,7 +45,6 @@ export class LineRegistration {
 
   @UpdateDateColumn({
     type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
     transformer: {
       to: (value: Date) => value,
       from: (value: Date) =>
