@@ -36,7 +36,8 @@ export class LineRegistration {
   @CreateDateColumn({
     type: "timestamp",
     transformer: {
-      to: (value: Date) => value,
+      to: (value: Date) =>
+        new Date(value.getTime() + value.getTimezoneOffset() * 60000),
       from: (value: Date) =>
         new Date(value.getTime() - value.getTimezoneOffset() * 60000),
     },
@@ -46,7 +47,8 @@ export class LineRegistration {
   @UpdateDateColumn({
     type: "timestamp",
     transformer: {
-      to: (value: Date) => value,
+      to: (value: Date) =>
+        new Date(value.getTime() + value.getTimezoneOffset() * 60000),
       from: (value: Date) =>
         new Date(value.getTime() - value.getTimezoneOffset() * 60000),
     },

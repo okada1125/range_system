@@ -54,11 +54,15 @@ export default function RegisterForm() {
       if (typeof window !== "undefined" && window.liff) {
         try {
           await window.liff.init({ liffId: "2008256152-pOz4Rxrz" });
+          console.log("LIFF初期化成功");
           if (window.liff.isLoggedIn()) {
             const profile = await window.liff.getProfile();
+            console.log("LINE プロフィール取得:", profile);
             setLineUserId(profile.userId);
             // 登録済みかチェック
             checkRegistration(profile.userId);
+          } else {
+            console.log("LIFFにログインしていません");
           }
         } catch (error) {
           console.error("LIFF初期化エラー:", error);
@@ -87,6 +91,7 @@ export default function RegisterForm() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const lineUserIdParam = urlParams.get("lineUserId");
+    console.log("URLパラメータから取得したLINE User ID:", lineUserIdParam);
 
     if (lineUserIdParam) {
       setLineUserId(lineUserIdParam);
@@ -126,6 +131,8 @@ export default function RegisterForm() {
         ...data,
         lineUserId: lineUserId || undefined,
       };
+
+      console.log("送信データ:", formData); // デバッグ用ログ
 
       const response = await fetch("/api/register", {
         method: "POST",
