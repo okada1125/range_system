@@ -36,10 +36,14 @@ export class LineRegistration {
   @CreateDateColumn({
     type: "timestamp",
     transformer: {
-      to: (value: Date) =>
-        new Date(value.getTime() + value.getTimezoneOffset() * 60000),
-      from: (value: Date) =>
-        new Date(value.getTime() - value.getTimezoneOffset() * 60000),
+      to: (value: Date) => {
+        if (!value) return value;
+        return new Date(value.getTime() + value.getTimezoneOffset() * 60000);
+      },
+      from: (value: Date) => {
+        if (!value) return value;
+        return new Date(value.getTime() - value.getTimezoneOffset() * 60000);
+      },
     },
   })
   createdAt!: Date;
@@ -47,10 +51,14 @@ export class LineRegistration {
   @UpdateDateColumn({
     type: "timestamp",
     transformer: {
-      to: (value: Date) =>
-        new Date(value.getTime() + value.getTimezoneOffset() * 60000),
-      from: (value: Date) =>
-        new Date(value.getTime() - value.getTimezoneOffset() * 60000),
+      to: (value: Date) => {
+        if (!value) return value;
+        return new Date(value.getTime() + value.getTimezoneOffset() * 60000);
+      },
+      from: (value: Date) => {
+        if (!value) return value;
+        return new Date(value.getTime() - value.getTimezoneOffset() * 60000);
+      },
     },
   })
   updatedAt!: Date;
